@@ -57,9 +57,9 @@
       {% if states('sensor.european_air_quality_index') | default('0') | int %}
         {{ [
           ["PM 2.5",  states('sensor.european_air_quality_index_for_pm_2_5') ],
-          ["PM 10",  states('sensor.european_air_quality_index_for_pm_2_5') ],
-          ["Nitrogen dioxide",  states('sensor.european_air_quality_index_for_pm_2_5') ],
-          ["Ozone",  states('sensor.european_air_quality_index_for_pm_2_5') ],
+          ["PM 10",  states('sensor.european_air_quality_index_for_pm_10') ],
+          ["Nitrogen dioxide",  states('sensor.european_air_quality_index_for_nitrogen_dioxide') ],
+          ["Ozone",  states('sensor.european_air_quality_index_for_ozone') ],
         ] | selectattr('1','eq', states('sensor.european_air_quality_index') )
         | map(attribute=0)|join(', ') }}
       {% endif %}
