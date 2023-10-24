@@ -1,0 +1,50 @@
+- resource: "https://iq.luchtmeetnet.nl/open_api/measurements"
+  scan_interval: 300
+  params:
+    station_number: NL10241
+  sensor:
+    - name: "Luchtmeetnet NO Level"
+      json_attributes_path: "$.data.[0]"
+      json_attributes:
+        - "value"
+        - "timestamp_measured"
+        - "formula"
+      value_template: "{{ value_json.data[0].value | float }}"
+      device_class: nitrogen_monoxide
+      unit_of_measurement: "µg/m³"
+    - name: "Luchtmeetnet NO2 Level"
+      json_attributes_path: "$.data.[1]"
+      json_attributes:
+        - "value"
+        - "timestamp_measured"
+        - "formula"
+      value_template: "{{ value_json.data[1].value | float }}"
+      device_class: nitrogen_dioxide
+      unit_of_measurement: "µg/m³"
+    - name: "Luchtmeetnet O3 Level"
+      json_attributes_path: "$.data.[2]"
+      json_attributes:
+        - "value"
+        - "timestamp_measured"
+        - "formula"
+      value_template: "{{ value_json.data[2].value | float }}"
+      device_class: ozone
+      unit_of_measurement: "µg/m³"
+    - name: "Luchtmeetnet PM10 Level"
+      json_attributes_path: "$.data.[3]"
+      json_attributes:
+        - "value"
+        - "timestamp_measured"
+        - "formula"
+      value_template: "{{ value_json.data[3].value | float }}"
+      device_class: pm10
+      unit_of_measurement: "µg/m³"
+    - name: "Luchtmeetnet PM25 Level"
+      json_attributes_path: "$.data.[4]"
+      json_attributes:
+        - "value"
+        - "timestamp_measured"
+        - "formula"
+      value_template: "{{ value_json.data[4].value | float }}"
+      device_class: pm25
+      unit_of_measurement: "µg/m³"

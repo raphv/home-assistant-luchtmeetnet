@@ -1,0 +1,74 @@
+- sensor:
+  - name: European Air Quality Index for PM 2.5
+    device_class: aqi
+    state:  >-
+      {{ [10, 20, 25, 50, 75] | select('lt',
+      states('sensor.luchtmeetnet_pm25_level')
+      | float) | list | count }}
+  - name: European Air Quality Level for PM 2.5
+    state:  >-
+      {{ [ 'Good', 'Fair', 'Moderate', 'Poor', 'Very poor', 'Extremely poor', 'Not yet available' ]
+        [ states('sensor.european_air_quality_index_for_pm_2_5') | default('6') | int ]
+      }}
+  - name: European Air Quality Index for PM 10
+    device_class: aqi
+    state:  >-
+      {{ [20, 40, 50, 100, 150] | select('lt',
+      states('sensor.luchtmeetnet_pm10_level')
+      | float) | list | count }}
+  - name: European Air Quality Level for PM 10
+    state:  >-
+      {{ [ 'Good', 'Fair', 'Moderate', 'Poor', 'Very poor', 'Extremely poor', 'Not yet available' ]
+        [ states('sensor.european_air_quality_index_for_pm_10') | default('6') | int ]
+      }}
+  - name: European Air Quality Index for Ozone
+    device_class: aqi
+    state:  >-
+      {{ [50, 100, 130, 240, 380] | select('lt',
+        states('sensor.luchtmeetnet_o3_level')
+        | float) | list | count }}
+  - name: European Air Quality Level for Ozone
+    state:  >-
+      {{ [ 'Good', 'Fair', 'Moderate', 'Poor', 'Very poor', 'Extremely poor', 'Not yet available' ]
+        [ states('sensor.european_air_quality_index_for_ozone') | default('6') | int ]
+      }}
+  - name: European Air Quality Index for Nitrogen Dioxide
+    device_class: aqi
+    state:  >-
+      {{ [40, 90, 120, 230, 340] | select('lt',
+        states('sensor.luchtmeetnet_no2_level')
+        | float) | list | count }}
+  - name: European Air Quality Level for Nitrogen Dioxide
+    state:  >-
+      {{ [ 'Good', 'Fair', 'Moderate', 'Poor', 'Very poor', 'Extremely poor', 'Not yet available' ]
+        [ states('sensor.european_air_quality_index_for_nitrogen_dioxide') | default('6') | int ]
+      }}
+  - name: European Air Quality Index
+    device_class: aqi
+    state: >-
+        {{ [
+          states('sensor.european_air_quality_index_for_pm_2_5') | default('6') | int,
+          states('sensor.european_air_quality_index_for_pm_10') | default('6') | int,
+          states('sensor.european_air_quality_index_for_ozone') | default('6') | int,
+          states('sensor.european_air_quality_index_for_nitrogen_dioxide') | default('6') | int,
+          ] | max }}
+  - name: Dominant Pollutant
+    state: >-
+      {% if states('sensor.european_air_quality_index') | default('0') | int %}
+        {{ [
+          ["PM 2.5",  states('sensor.european_air_quality_index_for_pm_2_5') ],
+          ["PM 10",  states('sensor.european_air_quality_index_for_pm_2_5') ],
+          ["Nitrogen dioxide",  states('sensor.european_air_quality_index_for_pm_2_5') ],
+          ["Ozone",  states('sensor.european_air_quality_index_for_pm_2_5') ],
+        ] | selectattr('1','eq', states('sensor.european_air_quality_index') )
+        | map(attribute=0)|join(', ') }}
+      {% endif %}
+  - name: European Air Quality Level
+    state: >-
+      {{ [ 'Good', 'Fair', 'Moderate', 'Poor', 'Very poor', 'Extremely poor', 'Not yet available' ]
+        [ states('sensor.european_air_quality_index') | default('6') | int ]
+      }}
+      {% if states('sensor.european_air_quality_index') | default('0') | int %}
+      (due to {{states('sensor.dominant_pollutant')}})
+      {% endif %}
+
